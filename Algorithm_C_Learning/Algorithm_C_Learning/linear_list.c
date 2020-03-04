@@ -9,11 +9,11 @@
 
 /*****  此文件注释侧重于函数过程解释，具体函数用法请参考相应头文件中的函数说明  *****/
 
-/* 内部函数声明 */
+/*** 内部函数声明 ***/
 //带static修饰，为静态函数，为该文件私有，只能在函数声明处文件使用
 static LinerListNode * InitNode(int data);
 
-/* 函数定义 */
+/*** 函数定义 ***/
 
 //初始化链表
 LinerList * InitLinerList() {
@@ -36,7 +36,7 @@ LinerList * InitLinerList() {
 int InsertNode(int data, LinerList * List) {
 	//判断入参是否合法
 	if (List == NULL) {
-		return LL_ISNULL;
+		return LL_LIST_ISNULL;
 	}
 	//生成结点
 	LinerListNode * node = InitNode(data);
@@ -56,6 +56,8 @@ int InsertNode(int data, LinerList * List) {
 		if (curr->data == data) {
 			//释放节点
 			free(node);
+			//一个编程的好习惯，将free的指针指向空，防止再用时发生意外
+			node == NULL;
 			return LL_NODE_EXIST;
 		}
 		//往头节点前插
@@ -107,5 +109,62 @@ LinerListNode * InitNode(int data) {
 }
 
 //删除节点
-//入参：删除节点的数据域，对应链表
-//int DeleteNode(int, LinerList *);
+int DeleteNode(int data, LinerList * List) {
+	//检查入参
+	if (List == NULL) {
+		return LL_LIST_ISNULL;
+	}
+	if (List->head == NULL || List->tail == NULL) {
+		return LL_NODE_NOTEXIST;
+	}
+	//寻找节点
+	for (LinerListNode *curr = List->head; curr != NULL; curr = curr->next) {
+		if (data == curr->data) {
+			//链表中只有一个节点时
+			if (List->len == 1) {
+				free(curr);
+				curr == NULL;
+				List->head = NULL;
+				List->tail = NULL;
+
+				return SUCCESS;
+			}
+			//删除头节点
+			if (curr == List->head) {
+				LinerListNode* nextNode = curr->next;
+				nextNode->pre = NULL;
+				List->head = nextNode;
+
+				free(curr);
+				curr == NULL;
+				return SUCCESS;
+			}
+
+			//删除尾节点
+			if (curr == List->tail) {
+				LinerListNode * preNode = curr->pre;
+				preNode->next = NULL;
+				List->tail = preNode;
+
+				free(curr);
+				curr == NULL;
+				return SUCCESS;
+			}
+
+			//删除中间节点
+			LinerListNode * preNode = curr->pre;
+			LinerListNode * nextNode = curr->next;
+
+			preNode->next = nextNode;
+			nextNode->pre = preNode;
+
+			free(curr);
+			curr == NULL;
+			return SUCCESS;
+		}
+
+	}
+
+	return LL_NODE_NOTEXIST;
+}
+
