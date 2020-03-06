@@ -66,6 +66,7 @@ int InsertNode(int data, LinerList * List) {
 			curr->pre = node;
 			//头节点改变
 			List->head = node;
+			List->len++;
 			return SUCCESS;
 		}
 		//往尾节点后插
@@ -74,6 +75,7 @@ int InsertNode(int data, LinerList * List) {
 			curr->next = node;
 			//尾节点改变
 			List->tail = node;
+			List->len++;
 			return SUCCESS;
 		}
 		//中间插入
@@ -86,6 +88,7 @@ int InsertNode(int data, LinerList * List) {
 
 			next->pre = node;
 			curr->next = node;
+			List->len++;
 			return SUCCESS;
 		}
 	}
@@ -126,7 +129,7 @@ int DeleteNode(int data, LinerList * List) {
 				curr == NULL;
 				List->head = NULL;
 				List->tail = NULL;
-
+				List->len--;
 				return SUCCESS;
 			}
 			//删除头节点
@@ -137,6 +140,8 @@ int DeleteNode(int data, LinerList * List) {
 
 				free(curr);
 				curr == NULL;
+
+				List->len--;
 				return SUCCESS;
 			}
 
@@ -148,6 +153,8 @@ int DeleteNode(int data, LinerList * List) {
 
 				free(curr);
 				curr == NULL;
+
+				List->len--;
 				return SUCCESS;
 			}
 
@@ -160,6 +167,8 @@ int DeleteNode(int data, LinerList * List) {
 
 			free(curr);
 			curr == NULL;
+
+			List->len--;
 			return SUCCESS;
 		}
 
@@ -168,3 +177,80 @@ int DeleteNode(int data, LinerList * List) {
 	return LL_NODE_NOTEXIST;
 }
 
+//寻找节点
+LinerListNode * FindNode(int data, LinerList * list) {
+	//检查入参
+	if (list == NULL) {
+		return NULL;
+	}
+	//遍历链表
+	for (LinerListNode * curr = list->head;curr != NULL;curr = curr->next) {
+		if (curr->data == data) {
+			return curr;
+		}
+	}
+
+	return NULL;
+}
+
+//合并链表
+LinerList * MergeList(LinerList *listA, LinerList *listB) {
+	//检查入参
+	if (listA == NULL) {
+		return listB;
+	}
+	if (listB == NULL) {
+		return listA;
+	}
+	//初始化返回链表
+	LinerList * result = InitLinerList();
+	if (result == NULL) {
+		return NULL;
+	}
+	//合并
+	for (LinerListNode *currA = listA->head, *currB = listB->head; (currA != NULL) || (currB != NULL);) {
+		//谁小放谁，或另一个链表上的节点已不存在
+		if (currA->data < currB->data || currB == NULL) {
+			//放入A节点
+			InsertNode(currA->data, result);
+			//下一个A
+			currA = currA->next;
+		}
+		else if (currA->data > currB->data || currA == NULL) {
+			//放入B节点
+			InsertNode(currB->data, result);
+			//下一个B
+			currB = currB->next;
+		}
+		else if (currA->data == currB->data) {
+			//一样的只放一个
+			InsertNode(currA->data, result);
+			//都后移一位
+			currA = currA->next;
+			currB = currB->next;
+		}
+	}
+
+	return result;
+}
+
+//释放链表
+int FreeList(LinerList * list) {
+	//检查入参
+	if (list == NULL) {
+		return LL_LIST_ISNULL;
+	}
+	//先释放所有节点
+	for (LinerListNode* curr = list->head; curr != NULL;) {
+		//防止free风险，采用中间指针来释放指定地址的内存
+		LinerListNode* tem = curr;
+		curr = curr->next;//提前将curr后移
+		free(tem);//释放之前记录的节点，这样就不会影响循环体中curr指针
+		tem == NULL;//编程习惯，free掉的指针置空
+	}
+	//所有节点释放完毕，释放链表
+	free(list);
+	list == NULL;
+	
+	return SUCCESS
+}

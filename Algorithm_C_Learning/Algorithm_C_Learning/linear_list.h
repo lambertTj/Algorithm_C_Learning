@@ -39,7 +39,16 @@ int DeleteNode(int, LinerList *);
 
 //寻找节点
 //入参：待寻找数据域，对应链表。返回：对应节点，若没找到则返回NULL
-int FindNode(int, LinerList *);
+LinerListNode * FindNode(int, LinerList *);
+
+//合并链表
+//入参：待合并的两张链表。返回：合并后的链表。
+//若任意链表为空，则返回另一张链表
+LinerList * MergeList(LinerList *,LinerList *);
+
+//释放链表
+//入参：需要释放的链表
+int FreeList(LinerList *);
 
 /* ---------- 驱动列表 ---------- */
 
@@ -58,4 +67,6 @@ int FindNode(int, LinerList *);
 10.删除尾节点，之后再往前插，或往后插
 11.删除只有一个元素时，再插入一个元素
 12.删除中间节点，再在中间节点前后两个元素上，进行前后插入
+
+
 */
