@@ -117,6 +117,8 @@
   <ItemGroup>
     <ClCompile Include="linear_list.c" />
     <ClCompile Include="main.c" />
+    <ClCompile Include="stack.c" />
+    <ClCompile Include="stack.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ErrCode.h" />

@@ -24,3 +24,9 @@
 #define LL_NODE_NOTEXIST	103	//节点不存在
 #define LL_DRIVE_FAIL		104 //线性表驱动测试失败
 #define LL_LEN_OVERFLOW		105 //线性表已达最大长度
+
+/*栈错误返回 200-299*/
+//MS缩写代表 MyStack 栈练习
+#define MS_STACK_ISNULL		200	//栈为空
+#define MS_DATAISNULL		201 //栈数据为空
+#define MS_DATA_MAX_LEN		202	//栈数据最大
