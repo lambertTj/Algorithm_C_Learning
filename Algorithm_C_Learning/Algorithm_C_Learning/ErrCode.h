@@ -27,6 +27,7 @@
 
 /*栈错误返回 200-299*/
 //MS缩写代表 MyStack 栈练习
-#define MS_STACK_ISNULL		200	//栈为空
-#define MS_DATAISNULL		201 //栈数据为空
-#define MS_DATA_MAX_LEN		202	//栈数据最大
+#define MS_STACK_ISNULL			200	//栈为空
+#define MS_DATAISNULL			201 //待插入数据为空
+#define MS_DATA_MAX_LEN			202	//栈数据最大
+#define MS_STACK_DATA_ISNULL	203	//栈数据为空

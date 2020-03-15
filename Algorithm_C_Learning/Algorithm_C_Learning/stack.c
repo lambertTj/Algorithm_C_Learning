@@ -4,6 +4,7 @@
 */
 
 #include <stdlib.h>
+#include <stdio.h>
 #include "stack.h"
 #include "ErrCode.h"
 
@@ -23,9 +24,9 @@ ctrl + F 检索可以查看我认为的realloc的标准用法
 */
 
 //初始化栈
-myStack * initMyStack() {
+myStack* initMyStack() {
 	//为栈结构申请空间
-	myStack * result = (myStack *)malloc(sizeof(myStack));
+	myStack* result = (myStack*)malloc(sizeof(myStack));
 	if (result == NULL) {
 		return NULL;
 	}
@@ -49,7 +50,7 @@ myStack * initMyStack() {
 }
 
 //回收栈
-int freeMyStack(myStack *stack) {
+int freeMyStack(myStack* stack) {
 	//检查入参
 	if (stack == NULL) {
 		return MS_STACK_ISNULL;
@@ -68,7 +69,7 @@ int freeMyStack(myStack *stack) {
 }
 
 //插入数据
-int pushToMyStack(myStackDataField *data, myStack *stack) {
+int pushToMyStack(myStackDataField* data, myStack* stack) {
 	//检查入参
 	if (stack == NULL) {
 		return MS_STACK_ISNULL;
@@ -95,8 +96,91 @@ int pushToMyStack(myStackDataField *data, myStack *stack) {
 		stack->top = stack->base + stack->size -1;
 	}
 	//插入数据
-	*stack->top = *data; //不能赋地址，不然变成离散数据 （所以入参用地址很蛋疼，还得在外面释放，没有golang interface 好用）
+	*stack->top = *data; //不能赋地址，不然变成离散数据，内存由外面管理
 	stack->top++;
+
+	return SUCCESS;
+}
+
+//拿出数据，取头部数据
+int popFromStack(myStack* stack, myStackDataField* result) {
+	//检查入参
+	if (stack == NULL) {
+		return MS_STACK_ISNULL;
+	}
+	//确认栈不为空
+	if (stack->base == stack->top) {
+		return MS_STACK_DATA_ISNULL;
+	}
+	//拿出头顶数据，同时TOP指针下移
+	*result = *stack->top;
+	stack->top--;
+
+	return SUCCESS;
+}
+
+//清空栈
+int ClearStack(myStack* stack) {
+	//检查入参
+	if (stack == NULL) {
+		return MS_STACK_ISNULL;
+	}
+	//将头指向base即可
+	stack->top = stack->base;
+
+	return SUCCESS;
+}
+
+//栈长度
+int StackLength(myStack* stack) {
+	return stack->top - stack->base;
+}
+
+//遍历栈
+int VisitStack(myStack* stack, int visit(myStackDataField*)) {
+	if (stack == NULL) {
+		return MS_STACK_ISNULL;
+	}
+	printf("----- print stack -----\n");
+	printf("info: size:%d len:%d\n", stack->size, StackLength(stack));
+	//新建一个访问指针
+	for (myStackDataField* visitPtr = stack->base; visitPtr != stack->top; visitPtr++) {
+		visit(visitPtr);
+	}
+	printf("----- end of printing -----\n");
+	return SUCCESS;
+}
+
+//浏览
+int VisitStackData(myStackDataField* ptr) {
+	//根据用户自定义的，这里就默认打印int了
+	printf("%d\n",ptr->intData);
+	return SUCCESS;
+}
+
+/* ---------- 驱动列表 ---------- */
+static int Drive_MS1();
+
+//
+int Drive_MS1(){
+	//生成栈
+	myStack* testStack = initMyStack();
+	if (testStack == NULL) {
+		return SYS_MEM_OVERFLOW;
+	}
+	//打印
+	VisitStack(testStack,VisitStackData);
+
+	//销毁
+	freeMyStack(testStack);
+	testStack = NULL;
+
+	return SUCCESS;
+}
+
+//驱动测试
+int Drive_MS() {
+	Drive_MS1();
 
 	return SUCCESS;
 }
